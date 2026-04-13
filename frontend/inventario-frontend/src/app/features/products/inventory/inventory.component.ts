@@ -8,7 +8,8 @@ import { ChangeDetectorRef } from '@angular/core';
   selector: 'app-inventory',
   standalone: true,
   imports: [CommonModule, FormsModule], // 👈 MUY IMPORTANTE
-  templateUrl: './inventory.component.html'
+  templateUrl: './inventory.component.html',
+  styleUrl:'./inventory.component.scss'
 })
 export class InventoryComponent implements OnInit {
 
@@ -16,6 +17,7 @@ export class InventoryComponent implements OnInit {
   quantity: number = 0;
   type: string = 'entrada';
   products: any[] = [];
+  message: string = '';
 
   constructor(
     private productsService: ProductsService,
@@ -36,12 +38,13 @@ export class InventoryComponent implements OnInit {
 
     this.productsService.registerMovement(data).subscribe({
       next: () => {
-        alert('Movimiento registrado');
-        this.loadInventory(); // recargar
+        this.message = 'Movimiento registrado correctamente ✅';
+        this.loadInventory();
+
+        setTimeout(() => {
+          this.message = '';
+        }, 3000);
       },
-      error: (err: any) => {
-        console.error(err);
-      }
     });
   }
 
@@ -56,6 +59,11 @@ export class InventoryComponent implements OnInit {
         console.error(err);
       }
     });
+  }
+
+  logout() {
+    localStorage.removeItem('token');
+    window.location.href = '/'; // vuelve al login
   }
 
 }

@@ -1,29 +1,48 @@
-<h1>Inventario</h1>
+<div class="container">
+<button class="logout-btn" (click)="logout()">Cerrar sesión</button>
+  <h1>Inventario</h1>
 
-<ul>
-  <ng-container *ngFor="let p of products">
-    <li>
-      {{ p.name }} - {{ p.quantity }}
-    </li>
-  </ng-container>
-</ul>
+  <table>
+    <thead>
+      <tr>
+        <th>ID</th>
+        <th>Producto</th>
+        <th>Cantidad</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr *ngFor="let p of products">
+        <td>{{ p.id }}</td>
+        <td>{{ p.name }}</td>
+        <td>{{ p.quantity }}</td>
+      </tr>
+    </tbody>
+  </table>
 
-<hr>
+  <hr>
 
-<h2>Registrar Movimiento</h2>
+  <h2>Registrar Movimiento</h2>
 
-<select [(ngModel)]="selectedProductId">
-  <option [value]="0">Seleccione producto</option>
-  <option *ngFor="let p of products" [value]="p.id">
-    {{ p.name }}
-  </option>
-</select>
+  <div class="form-movement">
+    <select [(ngModel)]="selectedProductId">
+      <option [value]="0">Seleccione producto</option>
+      <option *ngFor="let p of products" [value]="p.id">
+        {{ p.name }}
+      </option>
+    </select>
 
-<input type="number" [(ngModel)]="quantity" placeholder="Cantidad">
+    <input type="number" [(ngModel)]="quantity" placeholder="Cantidad">
 
-<select [(ngModel)]="type">
-  <option value="entrada">Entrada</option>
-  <option value="salida">Salida</option>
-</select>
+    <select [(ngModel)]="type">
+      <option value="entrada">Entrada</option>
+      <option value="salida">Salida</option>
+    </select>
 
-<button (click)="registerMovement()">Guardar</button>
+    <button (click)="registerMovement()">Guardar</button>
+  </div>
+
+  <p *ngIf="message" class="success-msg">
+    {{ message }}
+</p>
+
+</div>
