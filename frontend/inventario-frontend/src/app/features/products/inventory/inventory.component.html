@@ -1,1 +1,29 @@
-<p>inventory works!</p>
+<h1>Inventario</h1>
+
+<ul>
+  <ng-container *ngFor="let p of products">
+    <li>
+      {{ p.name }} - {{ p.quantity }}
+    </li>
+  </ng-container>
+</ul>
+
+<hr>
+
+<h2>Registrar Movimiento</h2>
+
+<select [(ngModel)]="selectedProductId">
+  <option [value]="0">Seleccione producto</option>
+  <option *ngFor="let p of products" [value]="p.id">
+    {{ p.name }}
+  </option>
+</select>
+
+<input type="number" [(ngModel)]="quantity" placeholder="Cantidad">
+
+<select [(ngModel)]="type">
+  <option value="entrada">Entrada</option>
+  <option value="salida">Salida</option>
+</select>
+
+<button (click)="registerMovement()">Guardar</button>
