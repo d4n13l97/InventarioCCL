@@ -1,7 +1,8 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.EntityFrameworkCore;
+using InventarioCCL.api.Data;
 using InventarioCCL.api.Models;
-using System.Linq;
 
 namespace InventarioCCL.api.Controllers
 {
@@ -10,42 +11,45 @@ namespace InventarioCCL.api.Controllers
     [Authorize]
     public class ProductsController : ControllerBase
     {
-        // inventario en memoria
-        private static List<Product> products = new List<Product>
+        private readonly AppDbContext _context;
+
+        public ProductsController(AppDbContext context)
         {
-            new Product { Id = 1, Name = "Producto A", Quantity = 10 },
-            new Product { Id = 2, Name = "Producto B", Quantity = 20 }
-        };
+            _context = context;
+        }
 
         [HttpGet("inventario")]
-        public IActionResult GetInventory()
+        public async Task<IActionResult> GetInventory()
         {
+            var products = await _context.Products.ToListAsync();
             return Ok(products);
         }
 
         [HttpPost("movimiento")]
-        public IActionResult RegisterMovement([FromBody] ProductMovementRequest request)
+        public async Task<IActionResult> RegisterMovement([FromBody] ProductMovementRequest request)
         {
-            var product = products.FirstOrDefault(p => p.Id == request.ProductId);
+            var product = await _context.Products.FindAsync(request.ProductId);
 
             if (product == null)
                 return NotFound("producto no encontrado");
 
             if (request.Type == "entrada")
             {
-                product.Quantity += request.Quantity;
+                product.quantity += request.Quantity;
             }
             else if (request.Type == "salida")
             {
-                if (product.Quantity < request.Quantity)
+                if (product.quantity < request.Quantity)
                     return BadRequest("stock insuficiente");
 
-                product.Quantity -= request.Quantity;
+                product.quantity -= request.Quantity;
             }
             else
             {
                 return BadRequest("tipo invalido");
             }
+
+            await _context.SaveChangesAsync();
 
             return Ok(product);
         }
